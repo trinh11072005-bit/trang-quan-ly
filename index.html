@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Quản Lý Bài Viết</title>
+<link rel="stylesheet" href="trangchinh.css">
+</head>
+<body>
+
+<button class="dark-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<a href="trang1.html" class="logout-btn">Đăng xuất</a>
+
+<div class="container">
+
+<!-- ==== PANEL TRUNG TÂM (CỐ ĐỊNH) ==== -->
+<div class="panel center-panel panel-fixed">
+    <h2>Trung tâm nội dung</h2>
+    <div class="stats" id="stats">Bài của bạn: 0 | Tổng like: 0 | Bình luận: 0</div>
+
+    <input id="title" placeholder="Nhập tiêu đề bài viết...">
+    <textarea id="content" placeholder="Nhập nội dung bài viết..."></textarea>
+
+    <input id="imageFile" type="file" accept="image/*">
+
+    <select id="type">
+        <option value="Tin tức">Tin tức</option>
+        <option value="Giải trí">Giải trí</option>
+        <option value="Học tập">Học tập</option>
+        <option value="Khác">Khác</option>
+    </select>
+
+    <select id="visibility">
+        <option value="Công khai">Công khai</option>
+        <option value="Riêng tư">Riêng tư</option>
+    </select>
+
+    <button class="btn-primary" id="addBtn" onclick="addPost()">Thêm bài viết</button>
+</div>
+
+<!-- PANEL CHỨC NĂNG (CỐ ĐỊNH) -->
+<div class="panel panel-fixed">
+    <h2>Chức năng</h2>
+
+    <input id="search" placeholder="Tìm kiếm bài viết..." oninput="renderPosts()">
+
+    <select id="filter" onchange="renderPosts()">
+        <option value="Tất cả">Tất cả</option>
+        <option value="Tin tức">Tin tức</option>
+        <option value="Giải trí">Giải trí</option>
+        <option value="Học tập">Học tập</option>
+        <option value="Khác">Khác</option>
+    </select>
+
+    <button class="btn-danger" onclick="clearAll()">Xóa toàn bộ bài</button>
+</div>
+
+<!-- PANEL DANH SÁCH BÀI VIẾT -->
+<div class="panel panel-scroll">
+    <h2>Danh sách bài viết</h2>
+    <div id="list"></div>
+</div>
+
+</div>
+
+<script>
+// ======================
+// LẤY CÁC PHẦN TỬ DOM
+// ======================
+const titleInput = document.getElementById("title");
+const contentInput = document.getElementById("content");
+const typeInput = document.getElementById("type");
+const visibilityInput = document.getElementById("visibility");
+const imageFile = document.getElementById("imageFile");
+const searchInput = document.getElementById("search");
+const filterInput = document.getElementById("filter");
+const addBtn = document.getElementById("addBtn");
+const stats = document.getElementById("stats");
+
+// USER đang đăng nhập
+let loggedUser = localStorage.getItem("loggedUser") || "Trình";
+
+// DARK MODE
+if(localStorage.getItem("darkMode")==="on") document.body.classList.add("dark");
+function toggleDarkMode(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "on" : "off");
+}
+
+// ======================
+let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+let editingIndex = -1;
+
+function save(){ localStorage.setItem("posts", JSON.stringify(posts)); }
+
+// ======================
+// THÊM HOẶC CẬP NHẬT BÀI
+// ======================
+function addPost(){
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    const type = typeInput.value;
+    const visibility = visibilityInput.value;
+
+    if(!title || !content){
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+    }
+
+    const file = imageFile.files[0];
+
+    if(file){
+        const reader = new FileReader();
+        reader.onload = e => savePost(title, content, type, visibility, e.target.result);
+        reader.readAsDataURL(file);
+    } else {
+        savePost(title, content, type, visibility, "");
+    }
+}
+
+function savePost(title, content, type, visibility, image){
+    if(editingIndex !== -1){
+        let p = posts[editingIndex];
+        p.title = title;
+        p.content = content;
+        p.type = type;
+        p.visibility = visibility;
+        if(image) p.image = image;
+        p.time = new Date().toLocaleString();
+
+        editingIndex = -1;
+        addBtn.innerText = "Thêm bài viết";
+    } else {
+        posts.push({
+            title, content, type, visibility, image,
+            time: new Date().toLocaleString(),
+            likes: [],
+            comments: [],
+            user: loggedUser
+        });
+    }
+
+    save();
+    renderPosts();
+
+    titleInput.value = "";
+    contentInput.value = "";
+    imageFile.value = "";
+}
+
+function editPost(i){
+    editingIndex = i;
+    let p = posts[i];
+
+    titleInput.value = p.title;
+    contentInput.value = p.content;
+    typeInput.value = p.type;
+    visibilityInput.value = p.visibility;
+
+    addBtn.innerText = "Cập nhật bài viết";
+}
+
+function deletePost(i){
+    posts.splice(i,1);
+    save();
+    renderPosts();
+}
+
+function clearAll(){
+    if(confirm("Bạn có chắc muốn xóa toàn bộ bài?")){
+        posts = posts.filter(p => p.user !== loggedUser);
+        save();
+        renderPosts();
+    }
+}
+
+// ======================
+// LIKE
+// ======================
+function toggleLike(i){
+    let p = posts[i];
+
+    if(!p.likes.includes(loggedUser)) p.likes.push(loggedUser);
+    else p.likes = p.likes.filter(u => u !== loggedUser);
+
+    save();
+    renderPosts();
+}
+
+// ======================
+// BÌNH LUẬN
+// ======================
+function addComment(i){
+    let input = document.getElementById("cmt_"+i);
+    let text = input.value.trim();
+    if(!text) return;
+
+    posts[i].comments.push({
+        user: loggedUser,
+        text,
+        time: new Date().toLocaleString()
+    });
+
+    input.value = "";
+    save();
+    renderPosts();
+}
+
+// ======================
+// HIỂN THỊ DANH SÁCH BÀI
+// ======================
+function renderPosts(){
+    const search = searchInput.value.toLowerCase();
+    const filter = filterInput.value;
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    let filtered = posts.filter(p => {
+        if(p.visibility === "Riêng tư" && p.user !== loggedUser) return false;
+        if(filter !== "Tất cả" && p.type !== filter) return false;
+
+        return (
+            p.title.toLowerCase().includes(search) ||
+            p.content.toLowerCase().includes(search)
+        );
+    });
+
+    // THỐNG KÊ RIÊNG CHO USER
+    let myPosts = posts.filter(p => p.user === loggedUser);
+
+    stats.innerText =
+        `Bài của bạn: ${myPosts.length} | ` +
+        `Tổng like: ${myPosts.reduce((t,p)=>t+p.likes.length,0)} | ` +
+        `Bình luận: ${myPosts.reduce((t,p)=>t+p.comments.length,0)}`;
+
+    // HIỂN THỊ BÀI
+    filtered.forEach((p, index) => {
+        let globalIndex = posts.indexOf(p);
+
+        list.innerHTML += `
+        <div class="post">
+            <span class="post-type">${p.type}</span>
+            <b>${p.title}</b> <small>[${p.visibility}]</small>
+            <p>${p.content}</p>
+
+            ${p.image ? `<img src="${p.image}">` : ""}
+
+            <small>${p.time} - Tác giả: ${p.user}</small><br><br>
+
+            <button class="btn" onclick="toggleLike(${globalIndex})">❤️ ${p.likes.length} Like</button>
+
+            <div style="margin-top:10px">
+                <input id="cmt_${globalIndex}" placeholder="Bình luận..." style="width:80%;padding:8px">
+                <button class="btn-primary" onclick="addComment(${globalIndex})">Gửi</button>
+            </div>
+
+            <div style="margin-top:10px">
+                ${p.comments.map(c => `
+                    <div style="background:#eee;padding:8px;border-radius:6px;margin-top:5px">
+                        <b>${c.user}:</b> ${c.text}<br>
+                        <small>${c.time}</small>
+                    </div>
+                `).join("")}
+            </div>
+
+            <br>
+            <button class="btn" onclick="editPost(${globalIndex})">Sửa</button>
+            <button class="btn-danger" onclick="deletePost(${globalIndex})">Xóa</button>
+        </div>`;
+    });
+}
+
+renderPosts();
+</script>
+
+</body>
+</html>
