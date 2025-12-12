@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="page-account">
+        <div class="form-account">
+
+            <h1 class="inner-title">Đăng nhập</h1>
+            <div class="inner-desc">Vui lòng nhập tài khoản và mật khẩu để tiếp tục</div>
+
+            <form class="inner-form" id="loginForm">
+
+                <div class="inner-group">
+                    <label class="inner-label" for="username">Tài khoản *</label>
+                    <input class="inner-control" type="text" id="username" placeholder="Nhập tài khoản">
+                </div>
+
+                <div class="inner-group">
+                    <label class="inner-label" for="password">Mật khẩu *</label>
+                    <input class="inner-control" type="password" id="password">
+                </div>
+
+                <div class="inner-meta">
+                    <label>
+                        <input type="checkbox" id="rememberPassword">
+                        Nhớ mật khẩu
+                    </label>
+                </div>
+
+                <button class="inner-button">Đăng nhập</button>
+
+                <div class="inner-more">
+                    <span>Bạn chưa có tài khoản?</span>
+                    <a href="dangki.html">Tạo tài khoản</a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!username || !password) {
+                alert("Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                alert("Sai tài khoản hoặc mật khẩu!");
+                return;
+            }
+
+            // Lưu đúng key
+            localStorage.setItem("loggedUser", username);
+            localStorage.setItem("loggedRole", user.role);
+
+            // Điều hướng đúng vai trò
+            if (user.role === "admin") {
+                window.location.href = "admin.html";
+            } else {
+                window.location.href = "welcome.html";
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

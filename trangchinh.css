@@ -1,0 +1,160 @@
+
+/* === Giao diện chung === */
+body { 
+  margin: 0;
+  padding: 0;
+  font-family: Arial; 
+  background: #f5f5f5; 
+  color: #111; 
+  transition: 0.3s; 
+  position: relative;
+}
+.container { 
+  width: 95%; 
+  margin: 80px auto; 
+  display: flex; 
+  gap: 20px; 
+  flex-wrap: wrap; 
+}
+.panel { 
+  flex: 1; 
+  background: white; 
+  border: 1px solid #ddd; 
+  padding: 20px; 
+  border-radius: 15px; 
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+  min-width: 300px; 
+}
+.center-panel { 
+  flex: 2; 
+}
+input, select, textarea { 
+  width: 100%; 
+  padding: 10px; 
+  margin: 10px 0; 
+  border: 1px solid #bbb; 
+  border-radius: 8px; 
+  color: #111; 
+  background: #fff; }
+textarea { 
+  height: 120px; 
+  resize: vertical; 
+}
+button { 
+  padding: 10px 18px; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer; 
+}
+.btn-primary { 
+  background: #2563eb; 
+  color: white; 
+}
+.btn-danger { 
+  background: #dc2626; 
+  color: white; 
+}
+.btn { 
+  background: #e5e7eb; 
+}
+.post { 
+  background: #fff; 
+  padding: 15px; 
+  border: 1px solid #ddd; 
+  border-radius: 10px; 
+  margin-bottom: 12px; 
+  color: #111; 
+}
+.post-type { 
+  background: #ddd; 
+  padding: 3px 8px; 
+  border-radius: 6px; 
+  font-size: 12px; 
+  margin-right: 5px; }
+.stats { 
+  margin-bottom: 10px; 
+  font-weight: bold; 
+}
+.post img { 
+  max-width: 100%; 
+  margin-top: 10px; 
+  border-radius: 8px; 
+}
+
+/* Nút Dark Mode và Logout */
+.dark-btn { 
+  top: 15px; 
+  left: 15px; 
+  padding: 10px 15px; 
+  background: #374151; 
+  color: white; 
+  border-radius: 10px; 
+  border: none; 
+  cursor: pointer; 
+}
+.logout-btn { 
+  text-decoration: none; 
+  top: 15px; right: 15px; 
+  padding: 10px 15px; 
+  background: #dc2626; 
+  color: #fff; 
+  border-radius: 10px; 
+  border: none; 
+  cursor: pointer; 
+  position: absolute;
+  right: 0;
+}
+
+/* === Dark Mode === */
+body.dark { 
+  background: #1f2937; 
+  color: #f3f4f6;
+  position: absolute;
+  left: 0;
+  top: 10px; 
+}
+body.dark .panel { 
+  background: #111827; 
+  color: #f3f4f6; 
+  border-color: #374151; 
+}
+body.dark input, body.dark textarea, body.dark select { 
+  background: #1f2937; 
+  color: #f3f4f6; 
+  border-color: #4b5563; 
+}
+body.dark .btn { 
+  background: #374151; 
+  color: #f3f4f6; 
+}
+body.dark .btn-primary { 
+  background: #2563eb; 
+  color: white; 
+}
+body.dark .btn-danger { 
+  background: #dc2626; 
+  color: white; 
+}
+body.dark .post { 
+  background: #1f2937; 
+  border-color: #4b5563; 
+  color: #f3f4f6; 
+}
+body.dark .post div[style*="background:#eee"] { 
+  background: #374151 !important; 
+  color: #f3f4f6 !important; 
+}
+/* Container 3 cột không cuộn */
+.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr; 
+  gap: 20px;
+  padding: 20px;
+  height: calc(100vh - 100px); /* chiều cao toàn trang trừ header */
+}
+
+/* Panel cuộn riêng */
+.panel-scroll {
+  overflow-y: auto;
+  padding-right: 10px;
+}

@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+:root {
+    --color-primary: #4880FF;
+    --color-text: #202224;
+}
+
+* {
+    font-family: "Nunito Sans", sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+input,
+button,
+select,
+textarea {
+    outline: none;
+}
+
+/* page-account */
+.page-account {
+    background-image: url("../images/bg-account.svg");
+    background-size: cover;
+    background-position: center;
+    padding: 50px 10px;
+    min-height: 100vh;
+}
+
+/* End page-account */
+
+/* form-account */
+.form-account {
+    background-color: white;
+    border-radius: 24px;
+    border: 1px solid #B9B9B9;
+    padding: 90px 57px;
+    max-width: 630px;
+    margin: 0 auto;
+}
+
+.form-account .inner-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--color-text);
+}
+
+.form-account .inner-desc {
+    margin-bottom: 40px;
+    text-align: center;
+    opacity: 0.8;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+.form-account .inner-group {
+    margin-bottom: 30px;
+}
+
+.form-account .inner-group .inner-label {
+    display: block;
+    opacity: 0.8;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-text);
+    margin-bottom: 15px;
+}
+
+.form-account .inner-group .inner-control {
+    width: 100%;
+    height: 56px;
+    border-radius: 8px;
+    background-color: #F1F4F9;
+    border: 1px solid #D8D8D8;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+.form-account .inner-group .inner-control::placeholder {
+    color: #A6A6A6;
+}
+
+.form-account .inner-meta {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-account .inner-meta .inner-check {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+}
+
+.form-account .inner-meta .inner-check .just-validate-error-label {
+    width: 100%;
+}
+
+.form-account .inner-meta .inner-check input {
+    width: 24px;
+    height: 24px;
+}
+
+.form-account .inner-meta .inner-check label {
+    opacity: 0.6;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+.form-account .inner-meta .inner-link {
+    opacity: 0.6;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+.form-account .inner-meta .inner-link:hover {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.form-account .inner-button {
+    width: 100%;
+    height: 56px;
+    background-color: var(--color-primary);
+    border-radius: 8px;
+    opacity: 0.9;
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    border: 0;
+    cursor: pointer;
+}
+
+.form-account .inner-button:hover {
+    opacity: 1;
+}
+
+.form-account .inner-more {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.form-account .inner-more span {
+    font-weight: 600;
+    opacity: 0.65;
+    color: var(--color-text);
+}
+
+.form-account .inner-more a {
+    color: #5A8CFF;
+    text-decoration: underline;
+    font-weight: 700;
+    margin-left: 10px;
+}
+
+@media (max-width: 575.98px) {
+    .form-account {
+        padding: 40px 20px;
+    }
+}
+
+/* End form-account */

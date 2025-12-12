@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý tài khoản & bài viết</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <h2>Admin - Quản lý tài khoản & bài viết</h2>
+    <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+
+    <div class="stats" id="postStats">Tổng: 0 bài viết | 0 lượt like | 0 bình luận</div>
+
+    <!-- Form thêm tài khoản mới -->
+    <form id="addUserForm" onsubmit="return addUser()">
+        <input type="text" id="newUsername" placeholder="Tên tài khoản" required>
+        <input type="password" id="newPassword" placeholder="Mật khẩu" required>
+        <select id="newRole">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Thêm tài khoản</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tài khoản</th>
+                <th>Mật khẩu</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="userList"></tbody>
+    </table>
+
+    <script>
+        // Lấy danh sách users và tạo admin nếu chưa có
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        if (!users.find(u => u.username === "admin")) {
+            users.push({ username: "admin", password: "123456", role: "admin" });
+            localStorage.setItem("users", JSON.stringify(users));
+        }
+        users = JSON.parse(localStorage.getItem("users") || "[]");
+
+        // Kiểm tra quyền admin
+        let loggedUser = localStorage.getItem("loggedUser");
+        let currentUser = users.find(u => u.username === loggedUser);
+        if (!currentUser || currentUser.role !== "admin") {
+            alert("Bạn không có quyền truy cập trang này!");
+            window.location.href = "dangki.html";
+        }
+
+        // Lấy posts từ localStorage
+        let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+
+        // Thống kê bài viết
+        function updatePostStats() {
+            let totalPosts = posts.length;
+            let totalLikes = posts.reduce((sum, p) => sum + p.likes.length, 0);
+            let totalComments = posts.reduce((sum, p) => sum + p.comments.length, 0);
+            document.getElementById("postStats").innerText = `Tổng: ${totalPosts} bài viết | ${totalLikes} lượt like | ${totalComments} bình luận`;
+        }
+
+        // Load danh sách người dùng
+        function loadUsers() {
+            let tbody = document.getElementById("userList");
+            tbody.innerHTML = "";
+            users.forEach((u, i) => {
+                tbody.innerHTML += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${u.username}</td>
+                <td>${u.password}</td>
+                <td>${u.role}</td>
+                <td>
+                    <button class="btn-edit" onclick="editUser(${i})">Đổi mật khẩu</button>
+                    <button class="btn-delete" onclick="deleteUser(${i})">Xóa</button>
+                </td>
+            </tr>
+        `;
+            });
+        }
+
+        // Thêm user
+        function addUser() {
+            let username = document.getElementById("newUsername").value.trim();
+            let password = document.getElementById("newPassword").value.trim();
+            let role = document.getElementById("newRole").value;
+
+            if (users.some(u => u.username === username)) {
+                alert("Tài khoản đã tồn tại!");
+                return false;
+            }
+
+            users.push({ username, password, role });
+            localStorage.setItem("users", JSON.stringify(users));
+            loadUsers();
+
+            document.getElementById("newUsername").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("newRole").value = "user";
+            return false;
+        }
+
+        // Đổi mật khẩu
+        function editUser(i) {
+            let newPass = prompt(`Nhập mật khẩu mới cho "${users[i].username}":`, users[i].password);
+            if (newPass) {
+                users[i].password = newPass;
+                localStorage.setItem("users", JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        // Xóa user
+        function deleteUser(i) {
+            if (users[i].username === "admin") {
+                alert("Không thể xóa admin!");
+                return;
+            }
+            if (confirm(`Bạn có chắc muốn xóa tài khoản "${users[i].username}"?`)) {
+                users.splice(i, 1);
+                localStorage.setItem("users", JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        // Đăng xuất
+        function logout() {
+            localStorage.removeItem("loggedUser");
+            localStorage.removeItem("loggedRole");
+            window.location.href = "trang1.html";
+        }
+
+        // Load lúc đầu
+        loadUsers();
+        updatePostStats();
+    </script>
+
+</body>
+
+</html>
